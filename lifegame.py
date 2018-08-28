@@ -58,7 +58,6 @@ class Grid():
                 print('.' if self.data[i][j]==0 else 'o', sep='', end='\t')
             print('\n')
 
-
     def _show_verbose_(self):
         # show the grid on screen
         for i in range(1, self.size + 1):
@@ -69,10 +68,13 @@ class Grid():
             print('\n')
 
 if __name__ == "__main__":
-    grid = Grid(10)
+    grid = Grid(6)
     n = int(input("how many live cells at day0? (1 ~ 99) "))
     grid.create_the_world(n)
     grid.show()
-    for i in range(10):
+    while True:
         grid.update()
         grid.show()
+        cmd = input("n for next generation, q to quit: ")
+        if cmd == 'q':
+            break
