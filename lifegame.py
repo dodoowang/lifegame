@@ -1,11 +1,14 @@
 import random
-
+import pygame
+from time import sleep
+import sys
 
 class Grid():
 
     def __init__(self, size=10):
         # generate a grid with size (default is 10 * 10)
-        # internal data size will be (size + 2) * (size + 2), to pad zero on the edge
+        # internal data size will be (size + 2) * (size + 2), to avoid
+        # out of range operation
         self.size = size
         self.data = [[0 for i in range(size + 2)] for j in range(size + 2)]
 
@@ -52,29 +55,50 @@ class Grid():
 
     def show(self):
         # show the grid on screen
-        print("-" * 39 + str(self.count()) + "-" * 39)
+        print("-" * 30 + "cells alive: " + str(self.count()) + "-" * 30)
         for i in range(1, self.size + 1):
             for j in range(1, self.size + 1):
-                print('.' if self.data[i][j]==0 else 'o', sep='', end='\t')
+                print('.' if self.data[i][j] == 0 else 'o', sep='', end='\t')
             print('\n')
 
-    def _show_verbose_(self):
-        # show the grid on screen
+    def plot(self, screen, size_screen=1000):
+        # plot the grid on screen with pygame module
+        size_cell = size_screen / self.size
         for i in range(1, self.size + 1):
             for j in range(1, self.size + 1):
-                print('.' + str(self._live_or_die_(i, j)) if self.data[i][j]==0 
-                        else 'o' + str(self._live_or_die_(i, j)), 
-                        sep='', end='\t')
-            print('\n')
+                if self.data[i][j] == 1:
+                    pygame.draw.rect(screen, (0, 0, 255), (size_cell * (i-1),
+                                                           size_cell * (j-1),
+                                                           size_cell,
+                                                           size_cell), 0)
+
 
 if __name__ == "__main__":
-    grid = Grid(6)
-    n = int(input("how many live cells at day0? (1 ~ 99) "))
+    size = int(input("please specify the size of the world: "))
+    grid = Grid(size)
+    n = int(input("how many live cells at day0? "))
     grid.create_the_world(n)
-    grid.show()
+
+#    grid.show()
+#    gen = 0
+#    while True:
+#        grid.update()
+#        gen += 1
+#        print("-" * 30 + "generation: " + str(gen) + "-" * 30)
+#        grid.show()
+#        cmd = input("n for next generation, q to quit: ")
+#        if cmd == 'q':
+#            break
+
+    pygame.init()
+    screen = pygame.display.set_mode((1000, 1000))
     while True:
+        screen.fill((255, 255, 255))
+        grid.plot(screen, 1000)
+        pygame.display.update()
         grid.update()
-        grid.show()
-        cmd = input("n for next generation, q to quit: ")
-        if cmd == 'q':
-            break
+        sleep(0.2)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
