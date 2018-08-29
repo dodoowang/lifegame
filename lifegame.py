@@ -1,5 +1,4 @@
 import random
-import pygame
 from time import sleep
 import sys
 
@@ -79,26 +78,33 @@ if __name__ == "__main__":
     n = int(input("how many live cells at day0? "))
     grid.create_the_world(n)
 
-#    grid.show()
-#    gen = 0
-#    while True:
-#        grid.update()
-#        gen += 1
-#        print("-" * 30 + "generation: " + str(gen) + "-" * 30)
-#        grid.show()
-#        cmd = input("n for next generation, q to quit: ")
-#        if cmd == 'q':
-#            break
+    pygame_installed = True
+    try:
+        import pygame
+    except ImportError:
+        pygame_installed = False
 
-    pygame.init()
-    screen = pygame.display.set_mode((1000, 1000))
-    while True:
-        screen.fill((255, 255, 255))
-        grid.plot(screen, 1000)
-        pygame.display.update()
-        grid.update()
-        sleep(0.2)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+    if pygame_installed:
+        pygame.init()
+        screen = pygame.display.set_mode((1000, 1000))
+        while True:
+            screen.fill((255, 255, 255))
+            grid.plot(screen, 1000)
+            pygame.display.update()
+            grid.update()
+            sleep(0.2)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+    else:
+        grid.show()
+        gen = 0
+        while True:
+            grid.update()
+            gen += 1
+            print("-" * 30 + "generation: " + str(gen) + "-" * 30)
+            grid.show()
+            cmd = input("n for next generation, q to quit: ")
+            if cmd == 'q':
+                break
