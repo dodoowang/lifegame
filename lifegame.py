@@ -2,6 +2,7 @@ import random
 from time import sleep
 import sys
 
+
 class Grid():
 
     def __init__(self, size=10):
@@ -11,11 +12,34 @@ class Grid():
         self.size = size
         self.data = [[0 for i in range(size + 2)] for j in range(size + 2)]
 
-    def create_the_world(self, num=20):
-        # random create cells on the grid (default 20 cells)
-        cells = random.sample(range(self.size*self.size), num)
-        for pos in cells:
-            self.data[pos // self.size + 1][pos % self.size + 1] = 1
+    def create_the_world(self, pattern):
+        # create the world with pattern of cells specified
+        # if pattern is a number, then randomly generate this number of cells
+        # on the grid
+        # if pattern is a string of comma separated binary numbers like
+        # "10001, 11100, 11110, 00001", each 1 is a living cell to be created
+        # if pattern is a file, load the predefined pattern from the file
+        pattern = pattern.strip()
+        if pattern.isdigit():
+            num = int(pattern)
+            cells = random.sample(range(self.size*self.size), num)
+            for pos in cells:
+                self.data[pos // self.size + 1][pos % self.size + 1] = 1
+        if ',' in pattern:
+            pos_xy = self.size // 2
+            pattern = map(str.strip, pattern.split(','))
+            pattern = [list(map(int, list(x))) for x in pattern]
+            print(pattern)
+            for idx, row in enumerate(pattern):
+                self.data[pos_xy + idx][pos_xy: pos_xy + len(row)] = row
+        if '.' in pattern:
+            pos_xy = self.size // 2
+            pattern = [list(map(int, list(x.strip()))) for x in
+                       open(pattern).readlines()]
+            print(pattern)
+            for idx, row in enumerate(pattern):
+                self.data[pos_xy + idx][pos_xy: pos_xy + len(row)] = row
+
 
     def update(self):
         # update the status of every cells on the grid
@@ -73,10 +97,11 @@ class Grid():
 
 
 if __name__ == "__main__":
-    size = int(input("please specify the size of the world: "))
+    size = int(input("Please specify the size of the world: "))
     grid = Grid(size)
-    n = int(input("how many live cells at day0? "))
-    grid.create_the_world(n)
+    pattern = input("Please specify the pattern of day 0: ")
+    grid.create_the_world(pattern)
+    gen = 0
 
     pygame_installed = True
     try:
@@ -86,20 +111,21 @@ if __name__ == "__main__":
 
     if pygame_installed:
         pygame.init()
-        screen = pygame.display.set_mode((1000, 1000))
+        screen = pygame.display.set_mode((500, 500))
         while True:
+            print(f"generation {gen}, number of living cells = {grid.count()}")
             screen.fill((255, 255, 255))
-            grid.plot(screen, 1000)
+            grid.plot(screen, 500)
             pygame.display.update()
             grid.update()
-            sleep(0.2)
+            gen += 1
+            sleep(0.1)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
     else:
         grid.show()
-        gen = 0
         while True:
             grid.update()
             gen += 1
