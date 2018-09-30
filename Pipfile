@@ -8,6 +8,9 @@ name = "pypi"
 [packages]
 
 pygame = "*"
+singleton-decorator = "*"
+pantograph = "*"
+fire = "*"
 
 
 [dev-packages]
