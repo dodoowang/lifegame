@@ -6,9 +6,9 @@ from time import sleep
 from grid import Grid
 
 
-def GameOfLife(n=10, day0=40, frames=2):
+def GameOfLife(n=10, day0=40, fps=2):
         grid = Grid(n, day0)
-        timer_interval = 1.0 / frames
+        timer_interval = 1.0 / fps
 
         pygame.init()
         screen = pygame.display.set_mode((500, 500))
@@ -24,7 +24,7 @@ def GameOfLife(n=10, day0=40, frames=2):
 
 
 def show(screen, grid):
-    screen.fill((189, 189, 189))
+    screen.fill((17, 55, 117))
     size_screen = screen.get_width()
     n = grid.size
     sz = size_screen // n
